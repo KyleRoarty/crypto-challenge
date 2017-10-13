@@ -1,22 +1,12 @@
 #!/usr/bin/env python3
 
 import sys
-from argparse import ArgumentParser
-
 BASE64_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
 
-def getArgs():
-    parser = ArgumentParser()
-    parser.add_argument('hexstr', type=str, action='store',
-                        help='String of hex digits to be converted to base64')
-    parser.add_argument('-s','--string', action='store_true',
-                        help='Is the string an ASCII string?')
-
-    return parser.parse_args()
-
-def octetToChars(trip_oct, padding):
+def _octetToChars(trip_oct, padding):
     rev_chars = []
     bits = int(trip_oct, 16)
+
     for x in range(0, padding):
         rev_chars.append(BASE64_CHARS[-1])
         bits = bits >> 6
@@ -27,7 +17,26 @@ def octetToChars(trip_oct, padding):
 
     return reversed(rev_chars)
 
-def hexTo64(hex_str):
+def _asciiToHex(ascii_str):
+    hex_ret = []
+
+    for c in ascii_str:
+        hex_ret.append(format(ord(c), 'x'))
+
+    return ''.join(hex_ret)
+
+
+def hexTo64(in_str):
+
+    try:
+        int(in_str, 16)
+        hex_str = in_str
+    except ValueError:
+        try:
+            in_str.encode('ascii')
+            hex_str = _asciiToHex(in_str)
+        except UnicodeEncodeError:
+            return -1
 
     b64_str = []
 
@@ -38,27 +47,7 @@ def hexTo64(hex_str):
             padding = int((6-len(parse))/2)
             parse += '0'*padding*2
 
-        b64_str.extend(octetToChars(parse, padding))
+        b64_str.extend(_octetToChars(parse, padding))
         hex_str = hex_str[6:]
 
     return ''.join(b64_str)
-
-def asciiToHex(ascii_str):
-    hex_ret = []
-
-    for c in ascii_str:
-        hex_ret.append(format(ord(c), 'x'))
-
-    return ''.join(hex_ret)
-
-def main():
-    args = getArgs()
-    hex_str = args.hexstr
-
-    if args.string:
-        hex_str = asciiToHex(hex_str)
-
-    print(hexTo64(hex_str))
-
-if __name__ == '__main__':
-    main()
