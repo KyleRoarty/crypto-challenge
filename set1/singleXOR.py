@@ -30,5 +30,39 @@ CHAR_FREQ = {'a':8.167,
              'y':1.974,
              'z':0.074}
 
-def singleByteDecrypt(hex_str):
+def _valueString(ascii_str):
+    ascii_str_low = ascii_str.lower()
+    value = 0
+    for char in ascii_str_low:
+        try:
+            value += CHAR_FREQ[char]
+        except KeyError:
+            value += 0
 
+    return value
+
+def singleByteDecrypt(hex_str):
+    searchstring = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+    max_val = 0
+    mv_string = ''
+    mv_key = ''
+
+    extend = int(len(hex_str)/2)
+
+    for letter in searchstring:
+        ret_hex_str = fixedXOR(hex_str, format(ord(letter), 'x')*extend)
+        try:
+            ret_bytes = bytearray.fromhex(ret_hex_str)
+            ret_ascii_str = ret_bytes.decode('ascii')
+        except UnicodeDecodeError:
+            print("Uh oh...")
+            return -1
+
+        value = _valueString(ret_ascii_str)
+        if value > max_val:
+            max_val = value
+            mv_string = ret_ascii_str
+            mv_key = letter
+
+    return mv_string

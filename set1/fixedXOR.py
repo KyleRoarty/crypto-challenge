@@ -60,4 +60,4 @@ def fixedXOR(hex_1, hex_2):
 
     xor_hex_bits = _binStrXOR(hex_bits_1, hex_bits_2)
 
-    print(_binStrToHex(xor_hex_bits))
+    return _binStrToHex(xor_hex_bits)
