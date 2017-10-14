@@ -12,16 +12,18 @@ def neLines(f):
 def hexToBinary(hex_str):
     return format(int(hex_str, 16), "0{}b".format(len(hex_str)*4))
 
-def hammingDist(hex_1, hex_2):
+def isHex(str_1):
     try:
-        int(hex_1, 16)
+        int(str_1, 16)
     except ValueError:
-        hex_1 = asciiToHex(hex_1)
+        return False
 
-    try:
-        int(hex_2, 16)
-    except ValueError:
-        hex_2 = asciiToHex(hex_2)
+    return True
+
+def hammingDist(hex_1, hex_2):
+
+    hex_1 = hex_1 if isHex(hex_1) else asciiToHex(hex_1)
+    hex_2 = hex_2 if isHex(hex_2) else asciiToHex(hex_2)
 
     bin_1 = hexToBinary(hex_1)
     bin_2 = hexToBinary(hex_2)
