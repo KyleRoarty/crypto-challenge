@@ -48,7 +48,8 @@ def fixedXOR(hex_1, hex_2):
     try:
         int(hex_1, 16)
         int(hex_2, 16)
-    except ValueError:
+    except ValueError as e:
+        print(e)
         return -1
 
     if len(hex_1) is not len(hex_2):

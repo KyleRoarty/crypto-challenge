@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import cryptoHelpers as ch
 BASE64_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
 
 def _octetToChars(trip_oct, padding):
@@ -17,24 +18,14 @@ def _octetToChars(trip_oct, padding):
 
     return reversed(rev_chars)
 
-def _asciiToHex(ascii_str):
-    hex_ret = []
-
-    for c in ascii_str:
-        hex_ret.append(format(ord(c), 'x'))
-
-    return ''.join(hex_ret)
-
-
 def hexTo64(in_str):
-
     try:
         int(in_str, 16)
         hex_str = in_str
     except ValueError:
         try:
             in_str.encode('ascii')
-            hex_str = _asciiToHex(in_str)
+            hex_str = ch.asciiToHex(in_str)
         except UnicodeEncodeError:
             return -1
 
