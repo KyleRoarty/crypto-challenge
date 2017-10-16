@@ -35,3 +35,24 @@ def hexTo64(in_str):
         hex_str = hex_str[6:]
 
     return b64_str
+
+def b64ToHex(b64_str):
+
+    b64_str = b64_str.replace("=","")
+    bit_str = ''
+    hex_str = ''
+
+
+    for char in b64_str:
+        bit_str += (format(BASE64_CHARS.index(char), '06b'))
+
+    if len(b64_str) % 4 is not 0:
+        pad = -4 + ((len(b64_str) % 4)-2)*2
+        bit_str = bit_str[:pad]
+
+
+    while len(bit_str) is not 0:
+        hex_str = format(int(bit_str[-4:], 2), '01x') + hex_str
+        bit_str = bit_str[:-4]
+
+    return hex_str
