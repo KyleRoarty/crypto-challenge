@@ -2,73 +2,57 @@
 
 from fixedXOR import fixedXOR
 import cryptoHelpers as ch
-# from wikipedia
-CHAR_FREQ = {'a':8.167,
-             'b':1.492,
-             'c':2.782,
-             'd':4.253,
-             'e':12.702,
-             'f':2.228,
-             'g':2.015,
-             'h':6.094,
-             'i':6.966,
-             'j':0.153,
-             'k':0.772,
-             'l':4.025,
-             'm':2.406,
-             'n':6.749,
-             'o':7.507,
-             'p':1.929,
-             'q':0.095,
-             'r':5.987,
-             's':6.327,
-             't':9.056,
-             'u':2.758,
-             'v':0.978,
-             'w':2.360,
-             'x':0.150,
-             'y':1.974,
-             'z':0.074,
-             'A':8.167*.11682,
-             'B':1.492*.04434,
-             'C':2.782*.05238,
-             'D':4.253*.03174,
-             'E':12.702*.02799,
-             'F':2.228*.04027,
-             'G':2.015*.01642,
-             'H':6.094*.042,
-             'I':6.966*.0729,
-             'J':0.153*.005,
-             'K':0.772*.00456,
-             'L':4.025*.02415,
-             'M':2.406*.0382,
-             'N':6.749*.02284,
-             'O':7.507*.07631,
-             'P':1.929*.0431,
-             'Q':0.095*.00222,
-             'R':5.987*.02826,
-             'S':6.327*.06686,
-             'T':9.056*.15978,
-             'U':2.758*.0118,
-             'V':0.978*.00824,
-             'W':2.360*.05497,
-             'X':0.150*.00045,
-             'Y':1.974*.00763,
-             'Z':0.074*.00045}
+# from wikipedia, alphabetical order
+CHAR_FREQ = (.08167,
+             .01492,
+             .02782,
+             .04253,
+             .12702,
+             .02228,
+             .02015,
+             .06094,
+             .06966,
+             .00153,
+             .00772,
+             .04025,
+             .02406,
+             .06749,
+             .07507,
+             .01929,
+             .00095,
+             .05987,
+             .06327,
+             .09056,
+             .02758,
+             .00978,
+             .02360,
+             .00150,
+             .01974,
+             .00074)
 
-def _valueString(ascii_str):
-    ascii_str_low = ''.join(ascii_str.split())
-    value = 0
+def chiSquared(ascii_str):
+    ascii_str_low = ascii_str.lower()
+    str_len = 0
+    char_counts = [0] * 26
+
     for char in ascii_str_low:
-        try:
-            value += CHAR_FREQ[char]
-        except KeyError:
-            value -= 3.84
+        if ord(char) >= 97 and ord(char) <= 122:
+            char_counts[ord(char)-97] += 1
+            str_len += 1
 
-    return value/len(ascii_str_low)
+    exp_counts = [c*str_len for c in CHAR_FREQ]
+    chi_sq = 0
+
+    try:
+        for act, exp in zip(char_counts, exp_counts):
+            chi_sq += pow(act-exp, 2)/exp
+
+        return chi_sq
+    except ZeroDivisionError:
+        return 1e309
 
 def singleByteDecrypt(hex_str):
-    max_val = 0
+    min_val = 1e309
     mv_string = ''
     mv_key = ''
 
@@ -83,11 +67,10 @@ def singleByteDecrypt(hex_str):
             #print(e)
             continue
 
-        value = _valueString(ret_ascii_str)
-        if value > max_val:
-            max_val = value
+        chi_sq = chiSquared(ret_ascii_str)
+        if chi_sq < min_val:
+            min_val = chi_sq
             mv_string = ret_ascii_str
             mv_key = chr(i)
 
-    #print(mv_key)
     return mv_string
