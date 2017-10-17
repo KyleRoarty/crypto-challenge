@@ -38,21 +38,27 @@ def hexTo64(in_str):
 
 def b64ToHex(b64_str):
 
-    b64_str = b64_str.replace("=","")
+    b64_str = b64_str.replace('=','')
+    b64_str = b64_str.replace('\n','')
     bit_str = ''
     hex_str = ''
 
 
     for char in b64_str:
-        bit_str += (format(BASE64_CHARS.index(char), '06b'))
+        try:
+            bit_str += format(BASE64_CHARS.index(char), '06b')
+        except ValueError:
+            pass
 
     if len(b64_str) % 4 is not 0:
+        print(bit_str[-(len(bit_str) % 4)-4:])
         pad = -4 + ((len(b64_str) % 4)-2)*2
+        print(pad)
         bit_str = bit_str[:pad]
 
 
     while len(bit_str) is not 0:
-        hex_str = format(int(bit_str[-4:], 2), '01x') + hex_str
-        bit_str = bit_str[:-4]
+        hex_str += format(int(bit_str[:4], 2), '01x')
+        bit_str = bit_str[4:]
 
     return hex_str
