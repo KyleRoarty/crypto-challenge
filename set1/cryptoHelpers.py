@@ -10,6 +10,9 @@ def asciiToHex(ascii_str):
         hex_str += format(ord(char), '02x')
     return hex_str
 
+def hexToAscii(hex_str):
+    return ''.join([chr(int(hex_str[i:i+2], 16)) for i in range(0, len(hex_str), 2)])
+
 def hexToBinary(hex_str):
     return format(int(hex_str, 16), "0{}b".format(len(hex_str)*4))
 
@@ -26,7 +29,7 @@ def isHex(str_1):
     except ValueError:
         return False
 
-    return True
+    return False if (str_1 == '' or str_1 == None) else True
 
 def hammingDist(hex_1, hex_2):
     return xorHex(hex_1, hex_2).count('1')
