@@ -51,9 +51,7 @@ def b64ToHex(b64_str):
             pass
 
     if len(b64_str) % 4 is not 0:
-        print(bit_str[-(len(bit_str) % 4)-4:])
         pad = -4 + ((len(b64_str) % 4)-2)*2
-        print(pad)
         bit_str = bit_str[:pad]
 
 

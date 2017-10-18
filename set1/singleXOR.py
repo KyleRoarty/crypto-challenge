@@ -58,11 +58,11 @@ def singleByteDecrypt(hex_str):
             ret_ascii_str = ch.hexToAscii(ret_hex_str)
         else:
             continue
+
         chi_sq = chiSquared(ret_ascii_str)
-        #print([ret_ascii_str, chi_sq])
         if chi_sq < min_val:
             min_val = chi_sq
             mv_string = ret_ascii_str
             mv_key = chr(i)
 
-    return [mv_string, min_val]
+    return [mv_string, mv_key, min_val]
