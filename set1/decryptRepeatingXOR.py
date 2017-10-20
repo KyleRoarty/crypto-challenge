@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
 import cryptoHelpers as ch
-import hexto64
 import singleXOR
 import repeatingXOR
 
 def decryptRepeatingXOR(filename):
     f = open(filename, 'r').read().strip().replace('\n','')
     print(f)
-    hex_str2 = hex_str = hexto64.b64ToHex(f)
+    hex_str2 = hex_str = ch.b64ToHex(f)
 
     key_hdist = []
 
