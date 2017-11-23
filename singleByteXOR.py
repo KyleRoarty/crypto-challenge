@@ -17,6 +17,9 @@ CHAR_FREQ = (0.08167, 0.01492, 0.02782, 0.04253, 0.12702, 0.02228, 0.02015,
 
 FREQ_SW = CHAR_FREQ_SP
 
+''' Chi-sq analysis on a byte string.                                       '''
+''' Compares to expected values of characters (a-z and space)               '''
+''' in a string of a given length.                                          '''
 def chiSquared(byte_str):
     char_counts = [0] * 27
     str_len = 0
@@ -43,17 +46,18 @@ def chiSquared(byte_str):
     except ZeroDivisionError:
         return 1e309
 
-def singleByteDecrypt(hex_str):
-    hex_bytes = ch.hexToBytes(hex_str)
-    extend = len(hex_bytes)
-
+''' Input: Encrypted byte string; Output: decrypted byte string             '''
+''' XORs encrypted string, performs chi-sq analysis on potentially decrypted'''
+''' bytes. Returns bytes which have the lowest chi-sq value                 '''
+def singleByteDecrypt(byte_str):
+    extend = len(byte_str)
     min_val = 1e309
     mv_bytes = ''
     mv_key = ''
 
     for i in range(0,128):
         i_b = ch.hexToBytes('%.2x' % i)
-        xor_bytes = ch.xorBytes(hex_bytes, i_b*extend)
+        xor_bytes = ch.xorBytes(byte_str, i_b*extend)
 
         chi_sq = chiSquared(xor_bytes)
         if chi_sq < min_val:
