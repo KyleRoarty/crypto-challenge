@@ -27,26 +27,28 @@ def chiSquared(byte_str):
     for b in byte_str:
         if b == 9 or b == 10 or b == 13 or b == 32:
             char_counts[26] += 1
+            str_len += 1
         elif b > 127 or b < 32:
             return 1e309
         elif b >= 97 and b <= 122:
             char_counts[b-97] += 1
+            str_len += 1
         elif b >= 65 and b <= 90:
             char_counts[b-65] += 1
+            str_len += 1
+#        str_len += 1
 
-        str_len += 1
-
-    exp_counts = [c*str_len for c in FREQ_SW]
+    exp_counts = [c*len(byte_str) for c in FREQ_SW]
     chi_sq = 0
 
     try:
         for act,exp in zip(char_counts, exp_counts):
             chi_sq += pow(act-exp,2)/exp
-        return chi_sq/str_len
+        return chi_sq*pow(len(byte_str)/str_len,2)
     except ZeroDivisionError:
         return 1e309
 
-''' Input: Encrypted byte string; Output: decrypted byte string             '''
+''' Input: Encrypted byte string; Output: decrypted bytes, chi-sq value, key'''
 ''' XORs encrypted string, performs chi-sq analysis on potentially decrypted'''
 ''' bytes. Returns bytes which have the lowest chi-sq value                 '''
 def singleByteDecrypt(byte_str):
@@ -65,5 +67,23 @@ def singleByteDecrypt(byte_str):
             mv_bytes = xor_bytes
             mv_key = i_b
 
-    return mv_bytes
+    return mv_bytes, min_val, mv_key
 
+''' Takes a filename, returns bytes that are most likely to have been       '''
+''' encrypted using a single byte XOR encryption method                     '''
+def detect(filename):
+    f = open(filename, 'r')
+
+    min_score = 1e309
+    dec_bytes = ''
+
+    for line in ch.neLines(f):
+        line_bytes = ch.hexToBytes(line)
+        xord_bytes, val, _ = singleByteDecrypt(line_bytes)
+
+        if xord_bytes is not '':
+            if val < min_score:
+                dec_bytes = xord_bytes
+                min_score = val
+
+    return dec_bytes
