@@ -47,11 +47,15 @@ def bytesToStr(in_bytes):
         return -1
 
 ''' Filters out empty lines from an input file.read()                       '''
-def neLines(f):
+def neLines(f, nlines = False):
     lines = filter(None, (line.strip() for line in f))
-    nlines = [line+'\n' for line in lines]
-    nlines[-1] = nlines[-1][:-1]
-    return nlines
+    if nlines:
+        ret_lines = [line+'\n' for line in lines]
+        ret_lines[-1] = nlines[-1][:-1]
+    else:
+        ret_lines = [line for line in lines]
+
+    return ret_lines
 
 ''' Rotates byte list by num, returns rotated list                          '''
 def rotate(in_bytes, num):

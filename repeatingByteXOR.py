@@ -5,7 +5,7 @@ import cryptoHelpers as ch
 
 def repeatingByteEncrypt(filename, key_bytes):
     f = open(filename, 'r')
-    f_ne = ch.neLines(f)
+    f_ne = ch.neLines(f, True)
     enc_bytes = []
     rot = 0
 
