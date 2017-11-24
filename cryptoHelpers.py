@@ -30,20 +30,20 @@ def b64ToBytes(in_str):
 def bytesTo64(in_bytes):
     try:
         return base64.b64encode(in_bytes).decode('utf-8')
-    except (TypeError, UnicodeError):
+    except (TypeError, UnicodeError) as e:
         return -1
 
 ''' Takes a string, returns bytes. Return -1 if string isn't valid unicode  '''
 def strToBytes(in_str):
     try:
         return in_str.encode('utf-8')
-    except UnicodeError:
+    except (UnicodeError, AttributeError) as e:
         return -1
 ''' Takes bytes, return string. Return -1 if bytes don't decode to unicode  '''
 def bytesToStr(in_bytes):
     try:
         return in_bytes.decode('utf-8')
-    except UnicodeError:
+    except (UnicodeError, AttributeError) as e:
         return -1
 
 ''' Filters out empty lines from an input file.read()                       '''
@@ -51,11 +51,18 @@ def neLines(f, nlines = False):
     lines = filter(None, (line.strip() for line in f))
     if nlines:
         ret_lines = [line+'\n' for line in lines]
-        ret_lines[-1] = nlines[-1][:-1]
+        ret_lines[-1] = ret_lines[-1][:-1]
     else:
         ret_lines = [line for line in lines]
 
     return ret_lines
+
+def parseInput(f_or_b, isFile, nlines = False):
+    if isFile:
+        f = open(f_or_b, 'r')
+        return ''.join(neLines(f, nlines))
+    else:
+        return f_or_b
 
 ''' Rotates byte list by num, returns rotated list                          '''
 def rotate(in_bytes, num):
