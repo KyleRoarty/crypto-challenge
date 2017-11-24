@@ -67,3 +67,7 @@ def xorBytes(bs_1, bs_2):
         return -1
 
     return bytes([a^b for (a,b) in zip(bs_1, bs_2)])
+
+def hammingDist(bs_1, bs_2):
+    xord = xorBytes(bs_1, bs_2)
+    return bin(int(bytesToHex(xord), base=16)).count('1')
