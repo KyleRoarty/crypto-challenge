@@ -75,6 +75,16 @@ def xorBytes(bs_1, bs_2):
 
     return bytes([a^b for (a,b) in zip(bs_1, bs_2)])
 
+''' Returns hamming dist (number of different bits of two strings           '''
 def hammingDist(bs_1, bs_2):
     xord = xorBytes(bs_1, bs_2)
     return bin(int(bytesToHex(xord), base=16)).count('1')
+
+def pkcs7(bs, pad_length):
+    diff = (pad_length - len(bs) % pad_length) % pad_length
+    if diff > 255:
+        # Can't represent using pkcs
+        return -1
+
+    return bs + bytes([diff])*diff
+
